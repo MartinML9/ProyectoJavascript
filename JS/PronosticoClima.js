@@ -22,17 +22,18 @@ function obtenerNombreCiudad() {
     }
     return nombreCiudad;
 }
+
+
 const boton = document.getElementById('botonFormulario');
-const elementoCiudad = document.getElementById("ElementoCiudad");
+let elementoCiudad = document.getElementById("ElementoCiudad");
 const textoOriginal = elementoCiudad.innerHTML;
-//boton.addEventListener("click", obtenerNombreCiudad);
-boton.addEventListener("click", function() { 
+
+boton.addEventListener("click", function(event) { 
+    event.preventDefault();
     let nombreCiudad = obtenerNombreCiudad();
     if (nombreCiudad !== null && nombreCiudad !== ""){
+        elementoCiudad.innerHTML = textoOriginal + " " + nombreCiudad;
         alert("La ciudad ingresada es " + nombreCiudad);
-        elementoCiudad.innerHTML = textoOriginal;
-        elementoCiudad.innerHTML += " " + nombreCiudad; 
-        
     }
 });
 
