@@ -37,7 +37,7 @@ boton.addEventListener("click", function(event) {
     }
 });
 
-const apiKey = '';
+const apiKey = '62c4f021529f44f85682ea32aed444a4';
 
 fetch(`https://api.openweathermap.org/data/2.5/weather?q=San%20Juan,ar&appid=${apiKey}`)
   .then(response => response.json())
