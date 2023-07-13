@@ -33,13 +33,17 @@ input[type="text"] {
   padding: 5px;
   min-width: 300px;
   font-size: 16px;
-  margin: 0 auto;
 }
 
 button {
   margin: 10px;
   padding: 5px 10px;
   font-size: 16px;
+}
+
+div{
+  text-align: center;
+  background-color: #fff;
 }
 
 div p{
