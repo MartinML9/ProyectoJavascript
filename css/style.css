@@ -14,8 +14,12 @@ body {
 }
 
 .background-image img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   height: 100%;
-  width: 100%;
+  min-height: 50vw;
   z-index: -1;
 }
 
@@ -26,11 +30,11 @@ h2 {
 
 form {
   margin-bottom: 20px;
+  min-height: 8vh;
   text-align: center;
 }
 
 input[type="text"] {
-  padding: 5px;
   min-width: 300px;
   font-size: 16px;
 }
@@ -49,4 +53,9 @@ div{
 div p{
     margin: 0 auto;
     max-width: 300px;
+}
+
+.linkCiudad:hover{
+  font-weight: 600;
+  cursor: pointer;
 }

@@ -1,5 +1,9 @@
 const claveStorage = "cuidadesBuscadas";
 
+function getItemHistorial(){
+    document.querySelector("")
+}
+
 function detectarNumero(cadena) {
 
     let caracterEsNumero;
@@ -14,10 +18,10 @@ function detectarNumero(cadena) {
     return false;
 }
 
-function obtenerNombreCiudad() {
-    const inputCiudad = document.getElementById("ciudad");
-    const nombreCiudad = inputCiudad.value.trim();
-    console.log(nombreCiudad);
+function obtenerNombreCiudad(input) {
+    let nombreCiudad = inputCiudad.value.trim();
+    //convertir en lowerCase y primera letra en Mayusculas
+    nombreCiudad = nombreCiudad.toLowerCase().replace(/^.|\s\S/g, (match) => match.toUpperCase());
     inputCiudad.value = '';
     if (detectarNumero(nombreCiudad)) {
         alert("Ingrese una ciudad válida que no tenga numeros.");
@@ -29,8 +33,7 @@ function obtenerNombreCiudad() {
 function gestionarStorage(ciudadBuscada) {
     const maxLength = 5;
     let ciudadesGuardadas = JSON.parse(localStorage.getItem(claveStorage));
-    console.log(ciudadesGuardadas);
-    if(ciudadesGuardadas===null) {
+    if(ciudadesGuardadas === null) {
         ciudadesGuardadas = [];
     }
     if (ciudadesGuardadas.includes(ciudadBuscada)) {
@@ -48,36 +51,47 @@ function gestionarStorage(ciudadBuscada) {
 
 function actualizarHistorialEnHtml(){
     let ciudadesGuardadas = JSON.parse(localStorage.getItem(claveStorage));
-    let ciudadesHTML =  "<p>" + ciudadesGuardadas.toString().replaceAll(",","</p><p>") + "</p>";
-    historial.innerHTML="";
-    historial.innerHTML = ciudadesHTML;
-    console.log(ciudadesHTML);
+    if(ciudadesGuardadas != null){
+        let ciudadesHTML =  "<p class='linkCiudad'>" + ciudadesGuardadas.toString().replaceAll(",","</p><p class='linkCiudad'>") + "</p>";
+        historial.innerHTML="";
+        historial.innerHTML = ciudadesHTML;
+    }
 }
 
-const boton = document.getElementById('botonFormulario');
-const elementoCiudad = document.getElementById("ElementoCiudad");
-const tempeturaCiudad = document.getElementById("TemperaturaCiudad");
-const DescripcionClimaCiudad = document.getElementById("DescripcionClimaCiudad");
-const HumedadCiudad = document.getElementById("HumedadCiudad");
-const historial = document.getElementById("historial");
+function agregarEventoCargarLinkEnInput(input) {
+    let elementosCiudad = document.querySelectorAll('.linkCiudad');
+    elementosCiudad.forEach(elemento => {
+        elemento.addEventListener('click', event => {
+            input.value = event.target.innerHTML;
+        });
+    });
+}
+function agregarEventoObtenerClima() {
+    let elementosCiudad = document.querySelectorAll('.linkCiudad');
+    elementosCiudad.forEach(elemento => {
+        elemento.addEventListener('click', event => {
+            getClimaActualOnClick(event.target.innerHTML);
+        });
+    });
+}
 
-const apiKey = '62c4f021529f44f85682ea32aed444a4';
-actualizarHistorialEnHtml();
-
-boton.addEventListener("click", function (event) {
-    event.preventDefault();
+function getClimaActualOnClick(ciudad) {
     let coordCiudad = {};
-    const nombreCiudad = obtenerNombreCiudad();
+    const nombreCiudad = ciudad;
+    elementoCiudad.innerHTML = "recibiendo datos...";
+    tempeturaCiudad.innerHTML = "";
+    DescripcionClimaCiudad.innerHTML = "";
+    HumedadCiudad.innerHTML = "";
     if (nombreCiudad !== null && nombreCiudad !== "") {
+        console.log("Obteniendo datos...");
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${nombreCiudad}&appid=${apiKey}&lang=es`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Ciudad Invalida");
+                    throw new Error('Hubo un error en la peticion. Código de estado: ' + response.status);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log(data);
                 elementoCiudad.innerHTML = nombreCiudad;
                 tempeturaCiudad.innerHTML = (data.main.temp - 273.15).toFixed(2);
                 DescripcionClimaCiudad.innerHTML = data.weather[0].description;
@@ -88,13 +102,36 @@ boton.addEventListener("click", function (event) {
                 }
                 gestionarStorage(nombreCiudad);
                 actualizarHistorialEnHtml();
+                agregarEventoCargarLinkEnInput(inputCiudad);
+                agregarEventoObtenerClima();
+                console.log("Datos encontrados");
+                console.log("__________________________");
             })
             .catch(error => {
                 elementoCiudad.innerHTML = error.message;
+                console.log("Datos no encontrados, error: " + error.message);
                 console.log(error);
             });
     }
 
+}
+
+const inputCiudad = document.getElementById("ciudad");
+const boton = document.getElementById('botonFormulario');
+const elementoCiudad = document.getElementById("ElementoCiudad");
+const tempeturaCiudad = document.getElementById("TemperaturaCiudad");
+const DescripcionClimaCiudad = document.getElementById("DescripcionClimaCiudad");
+const HumedadCiudad = document.getElementById("HumedadCiudad");
+const historial = document.getElementById("historial");
+
+const apiKey = '62c4f021529f44f85682ea32aed444a4';
+actualizarHistorialEnHtml();
+agregarEventoCargarLinkEnInput(inputCiudad);
+agregarEventoObtenerClima();
+
+boton.addEventListener("click", event => {
+    event.preventDefault();
+    getClimaActualOnClick(obtenerNombreCiudad(inputCiudad));
 });
 
 
