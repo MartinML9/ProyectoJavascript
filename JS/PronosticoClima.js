@@ -4,6 +4,20 @@ function getItemHistorial(){
     document.querySelector("")
 }
 
+function showToast(message, color) {
+    Toastify({
+      text: message,
+      duration: 1000,
+      gravity: "bottom",
+      position: "center",
+      stopOnFocus: false,
+      style: {
+        background: color,
+        borderRadius: "8px",
+      }
+    }).showToast();
+  }
+
 function detectarNumero(cadena) {
 
     let caracterEsNumero;
@@ -83,7 +97,7 @@ function getClimaActualOnClick(ciudad) {
     DescripcionClimaCiudad.innerHTML = "";
     HumedadCiudad.innerHTML = "";
     if (nombreCiudad !== null && nombreCiudad !== "") {
-        console.log("Obteniendo datos...");
+        showToast("Obteniendo datos...", "#6C757D");
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${nombreCiudad}&appid=${apiKey}&lang=es`)
             .then(response => {
                 if (!response.ok) {
@@ -104,13 +118,13 @@ function getClimaActualOnClick(ciudad) {
                 actualizarHistorialEnHtml();
                 agregarEventoCargarLinkEnInput(inputCiudad);
                 agregarEventoObtenerClima();
-                console.log("Datos encontrados");
-                console.log("__________________________");
+                showToast("Datos encontrados", "#00CC66");
+                console.log("Busqueda realizada con exito");
             })
             .catch(error => {
                 elementoCiudad.innerHTML = error.message;
                 console.log("Datos no encontrados, error: " + error.message);
-                console.log(error);
+                showToast("Error", "#FF6666");;
             });
     }
 
